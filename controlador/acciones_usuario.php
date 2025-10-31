@@ -17,6 +17,18 @@ switch ($accion) {
     case 'listar':
         $controlador->obtener_usuarios();
         break;
+    case 'usuario_id':
+        $id_usuario = $_GET['id_usuario'] ?? null;
+        if ($id_usuario) {
+            $resultado = $controlador->obtener_usuario_id($id_usuario);
+            // print_r($resultado); // imprimir los resultados
+        } else {
+            echo "Falta el parámetro id_usuario.";
+        }
+        break;
+    case 'editar':
+        $controlador->editar_usuario();
+        break;
     case 'eliminar':
         $controlador->eliminar_usuario();
         break;

@@ -53,8 +53,8 @@
             <div class="collapse navbar-collapse" id="navbarNav2">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="./perfil_admin.php">Perfil</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">Usuarios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./panel_menu.php">Menu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./panel_usuarios.php">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">Menu</a></li>
                     <li class="nav-item"><a class="nav-link" href="">Sucursales</a></li>
                 </ul>
             </div>
@@ -66,16 +66,16 @@
     
     <div class="container mt-3 mb-4">
         <div class="card shadow p-4">
-            <h2>Usuarios</h2>         
+            <h2>Menu</h2>         
             <table class="table table-hover">
                 <thead>
                     <tr>
                     <th>Id</th>
                     <th>Nombre</th>
-                    <th>Documento</th>
-                    <th>Rol</th>
-                    <th>Correo</th>
-                    <th>Telefono</th>
+                    <th>Descripcion</th>
+                    <th>Imagen</th>
+                    <th>Precio</th>
+                    <th>Tipo Menu</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -83,26 +83,28 @@
                 <tbody>
 
                     <?php
-                        require_once "../controlador/usuario_controlador.php";
+                        require_once "../controlador/menu_controlador.php";
                         
-                        $usuario_controlador = new Usuario_controlador();
-                        $lista_usuarios = $usuario_controlador->obtener_usuarios();
+                        $menu_controlador = new Menu_controlador();
+                        $lista_menu = $menu_controlador->listar_menu();
 
-                        foreach($lista_usuarios as $u){
+                        foreach($lista_menu as $m){
                             echo "
                                 <tr>
-                                    <td>{$u['id_usuario']}</td>
-                                    <td>{$u['nombres']}</td>
-                                    <td>{$u['documento']}</td>
-                                    <td>{$u['rol']}</td>
-                                    <td>{$u['Correo']}</td>
-                                    <td>{$u['telefono']}</td>
+                                    <td>{$m['id_menu']}</td>
+                                    <td>{$m['nombre']}</td>
+                                    <td>{$m['descripcion']}</td>
                                     <td>
-                                    <a href='./editar_usuario.php?id_usuario={$u['id_usuario']}' class='btn btn-info'>Editar</a>
+                                        <img src='../uploads/{$m['imagen']}' class='img-fluid' alt='' style='width: 80px; height: 80px; object-fit: contain; border-radius: 8px;'>
+                                    </td>
+                                    <td>{$m['precio']}</td>
+                                    <td>{$m['tipo_menu']}</td>
+                                    <td>
+                                        <a href='./editar_menu.php?id_menu={$m['id_menu']}' class='btn btn-info'>Editar</a>
                                     </td>
                                     <td>
-                                        <form action='../controlador/acciones_usuario.php?accion=eliminar'      method='POST' style='display:inline;'>
-                                            <input type='hidden' name='id_usuario' value='{$u['id_usuario']}'>
+                                        <form action='../controlador/acciones_menu.php?accion=eliminar'      method='POST' style='display:inline;'>
+                                            <input type='hidden' name='id_menu' value='{$m['id_menu']}'>
                                             <button type='submit' class='btn btn-danger' onclick='return confirmarEliminar()'>Eliminar</button>
                                         </form>
                                     </td>
@@ -129,44 +131,40 @@
     <!-- Formulario de registro de usuarios -->
     <div class="container contact-container">
         <div class="card shadow p-4">
-            <h2 class="text-center mb-4">Registrar Usuario</h2>
+            <h2 class="text-center mb-4">Registrar Plato</h2>
 
             <?php
                 if (isset($_SESSION['success_message'])) {
-                    echo '<div class="alert alert-success">Usuario creado</div>';
+                    echo '<div class="alert alert-success">Plato creado</div>';
                     unset($_SESSION['success_message']);
                 }
             ?>
 
-            <form action="../controlador/acciones_usuario.php?accion=registrar" method="POST">
+            <form action="../controlador/acciones_menu.php?accion=crear" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre:</label>
-                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese un nombre" name="nombre" required>
+                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre" name="nombre" required>
                 </div>
                 <div class="mb-3">
-                    <label for="documento" class="form-label">Documento:</label>
-                    <input type="number" class="form-control" id="documento" placeholder="Ingrese su documento" name="documento" required>
+                    <label for="descripcion" class="form-label">Descripcion:</label>
+                    <input type="text" class="form-control" id="descripcion" placeholder="Ingrese la descripcion" name="descripcion" required>
                 </div>
                 <div class="mb-3">
-                    <label for="rol" class="form-label">Rol:</label>
-                    <select name="rol" id="rol" class="form-control" required>
+                    <label for="imagen" class="form-label">Imagen:</label>
+                    <input type="file" class="form-control" id="imagen" placeholder="Ingrese la imagen" name="imagen" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label for="precio" class="form-label">Precio:</label>
+                    <input type="number" class="form-control" id="precio" placeholder="Ingrese un precio" name="precio" required>
+                </div>
+                <div class="mb-3">
+                    <label for="tipo_menu" class="form-label">Tipo Menu:</label>
+                    <select name="tipo_menu" id="tipo_menu" class="form-control" required>
                         <option value="" hidden>Seleccionar</option>
-                        <option value="Cliente">Cliente</option>
-                        <option value="Admin">Administrador</option>
+                        <option value="1">Entradas</option>
+                        <option value="2">Platos Fuertes</option>
+                        <option value="3">Bebidas</option>
                     </select>
-                </div>
-                <div class="mb-3">
-                    <label for="correo" class="form-label">Correo:</label>
-                    <input type="email" class="form-control" id="correo" placeholder="Ingrese su correo" name="correo" required>
-                </div>
-                <div class="mb-3">
-                    <label for="contrasena" class="form-label">Contraseña:</label>
-                    <input type="password" class="form-control" id="contrasena" placeholder="Ingrese la contraseña" name="contrasena" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="telefono" class="form-label">Telefono:</label>
-                    <input type="number" class="form-control" id="telefono" placeholder="Ingrese el telefono" name="telefono" required>
                 </div>
 
                 <button type="submit" class="btn btn-info w-100">Registrar</button>

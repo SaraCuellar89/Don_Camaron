@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-10-2025 a las 05:36:45
+-- Tiempo de generación: 31-10-2025 a las 01:16:24
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -47,6 +47,13 @@ CREATE TABLE `menu` (
   `precio` int(20) DEFAULT NULL,
   `Tipo_Menuid_tipo_menu` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `menu`
+--
+
+INSERT INTO `menu` (`id_menu`, `nombre`, `descripcion`, `imagen`, `precio`, `Tipo_Menuid_tipo_menu`) VALUES
+(5, 'Combo Hamburguesa', 'Hamburguesa con papas fritas y una gaseosa pequeña', '1761869590_hamburguesa.jpg', 25000, 2);
 
 -- --------------------------------------------------------
 
@@ -103,6 +110,15 @@ CREATE TABLE `tipo_menu` (
   `tipo_menu` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tipo_menu`
+--
+
+INSERT INTO `tipo_menu` (`id_tipo_menu`, `tipo_menu`) VALUES
+(1, 'Entrada'),
+(2, 'Plato Fuerte'),
+(3, 'Bebida');
+
 -- --------------------------------------------------------
 
 --
@@ -129,7 +145,7 @@ INSERT INTO `usuario` (`id_usuario`, `rol`, `nombres`, `documento`, `telefono`, 
 (14, 'Cliente', 'Barry Allen', 232, 3244354, 'allen@gmail.com', '1234'),
 (16, 'Cliente', 'Sofia Martinez', 2343534, 24343434, 'sofia@example.com', '1234'),
 (24, 'Cliente', 'Carlos Gonzales', 32324, 243435, 'carlitos@gmail.com', '1234'),
-(28, 'Cliente', 'coso', 666, 2147483647, 'coso@gmail.com', '1234');
+(28, 'Cliente', 'cosito uwu', 666, 2147483647, 'coso@gmail.com', '1234');
 
 --
 -- Índices para tablas volcadas
@@ -190,7 +206,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id_menu` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_menu` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `pedido`
@@ -214,7 +230,7 @@ ALTER TABLE `sucursal`
 -- AUTO_INCREMENT de la tabla `tipo_menu`
 --
 ALTER TABLE `tipo_menu`
-  MODIFY `id_tipo_menu` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_tipo_menu` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`

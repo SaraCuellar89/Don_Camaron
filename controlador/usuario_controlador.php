@@ -85,6 +85,41 @@ Class Usuario_controlador{
         return $usuario->listar_usuarios();
     }
 
+    // Obtener un usuario por su id
+    public function obtener_usuario_id($id_usuario){
+        $usuario = new Usuario();
+        return $usuario->obtener_usuario_id($id_usuario);
+    }
+
+    // Editar usuario
+    public function editar_usuario(){
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $id_usuario = $_POST['id_usuario'];
+            $nombre = $_POST['nombre'];
+            $documento = $_POST['documento'];
+            $rol = $_POST['rol'];
+            $correo = $_POST['correo'];
+            $telefono = $_POST['telefono'];
+            $contrasena = $_POST['contrasena'];
+
+            $usuario = new Usuario();
+            $usuario->editar_usuario($id_usuario, $nombre, $rol, $documento, $correo, $telefono, $contrasena);
+
+            session_start();
+            $_SESSION['success_message'] = true;
+            header("Location: " . $_SERVER['HTTP_REFERER']);
+            exit();
+
+            // echo "<pre>";
+            // print_r($_POST);
+            // echo "</pre>";
+            // exit();
+        }
+        else{ 
+            echo "No se pudo editar ";
+        }
+    }
+
     // Eliminar un usuario
     public function eliminar_usuario(){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){

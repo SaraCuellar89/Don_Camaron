@@ -1,9 +1,19 @@
+<?php
+
+require_once "../controlador/usuario_controlador.php";
+
+$usuario_controlador = new Usuario_controlador();
+$id_usuario = $_GET['id_usuario'];
+$usuario = $usuario_controlador->obtener_usuario_id($id_usuario);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil</title>
+    <title>Registro</title>
     <link rel="stylesheet" href="./bootstrap-5.0.2-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
@@ -35,9 +45,9 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="../index.php">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="./menu.php">Menú</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./sucursales.php">Sucursal</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./Inicio_sesion.php">Inicio de sesion</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="./perfil.php">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./sucursal.php">Sucursales</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="./Inicio_sesion.php">Inicio de sesion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
                 </ul>
             </div>
         </div>
@@ -62,114 +72,71 @@
     </nav>
 
 
-    <!-- Formulario de contacto -->
-    
-    <div class="container mt-3 mb-4">
-        <div class="card shadow p-4">
-            <h2>Usuarios</h2>         
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                    <th>Id</th>
-                    <th>Nombre</th>
-                    <th>Documento</th>
-                    <th>Rol</th>
-                    <th>Correo</th>
-                    <th>Telefono</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-
-                    <?php
-                        require_once "../controlador/usuario_controlador.php";
-                        
-                        $usuario_controlador = new Usuario_controlador();
-                        $lista_usuarios = $usuario_controlador->obtener_usuarios();
-
-                        foreach($lista_usuarios as $u){
-                            echo "
-                                <tr>
-                                    <td>{$u['id_usuario']}</td>
-                                    <td>{$u['nombres']}</td>
-                                    <td>{$u['documento']}</td>
-                                    <td>{$u['rol']}</td>
-                                    <td>{$u['Correo']}</td>
-                                    <td>{$u['telefono']}</td>
-                                    <td>
-                                    <a href='./editar_usuario.php?id_usuario={$u['id_usuario']}' class='btn btn-info'>Editar</a>
-                                    </td>
-                                    <td>
-                                        <form action='../controlador/acciones_usuario.php?accion=eliminar'      method='POST' style='display:inline;'>
-                                            <input type='hidden' name='id_usuario' value='{$u['id_usuario']}'>
-                                            <button type='submit' class='btn btn-danger' onclick='return confirmarEliminar()'>Eliminar</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            ";
-                        }
-
-                        echo '
-                            <script>
-                                function confirmarEliminar() {
-                                    return confirm("¿Estás seguro de eliminar este usuario?");
-                                }
-                            </script>
-                        ';
-
-                    ?>
-                </tbody>
-        
-            </table>
-        </div>
-    </div>
-
-
-    <!-- Formulario de registro de usuarios -->
+    <!-- Formulario de registro -->
     <div class="container contact-container">
         <div class="card shadow p-4">
-            <h2 class="text-center mb-4">Registrar Usuario</h2>
+            <h2 class="text-center mb-4">Editar Usuario</h2>
 
             <?php
                 if (isset($_SESSION['success_message'])) {
-                    echo '<div class="alert alert-success">Usuario creado</div>';
+                    echo '<div class="alert alert-success">Usuario actualizado correctamente - <a href="./panel_usuarios.php">Ir a Panel Usuarios</a></div>';
                     unset($_SESSION['success_message']);
                 }
             ?>
 
-            <form action="../controlador/acciones_usuario.php?accion=registrar" method="POST">
+            <form action="../controlador/acciones_usuario.php?accion=editar" method="POST">
+                <input type='hidden' name='id_usuario' value="<?php echo $usuario[0]['id_usuario']; ?>">
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre:</label>
-                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese un nombre" name="nombre" required>
+                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese un nombre" name="nombre" value="<?php echo $usuario[0]['nombres']; ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="documento" class="form-label">Documento:</label>
-                    <input type="number" class="form-control" id="documento" placeholder="Ingrese su documento" name="documento" required>
+                    <input type="number" class="form-control" id="documento" placeholder="Ingrese su documento" name="documento" value="<?php echo $usuario[0]['documento']; ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="rol" class="form-label">Rol:</label>
                     <select name="rol" id="rol" class="form-control" required>
                         <option value="" hidden>Seleccionar</option>
-                        <option value="Cliente">Cliente</option>
-                        <option value="Admin">Administrador</option>
+                        <option value="Cliente" <?php if($usuario[0]['rol'] == 'Cliente') echo 'selected'; ?>>Cliente</option>
+                        <option value="Admin" <?php if($usuario[0]['rol'] == 'Admin') echo 'selected'; ?>>Administrador</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="correo" class="form-label">Correo:</label>
-                    <input type="email" class="form-control" id="correo" placeholder="Ingrese su correo" name="correo" required>
+                    <input type="email" class="form-control" id="correo" placeholder="Ingrese su correo" name="correo" value="<?php echo $usuario[0]['Correo']; ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="contrasena" class="form-label">Contraseña:</label>
-                    <input type="password" class="form-control" id="contrasena" placeholder="Ingrese la contraseña" name="contrasena" required>
+                    <input type="password" class="form-control" id="contrasena" placeholder="Ingrese la contraseña" name="contrasena" value="<?php echo $usuario[0]['contrasena']; ?>" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="telefono" class="form-label">Telefono:</label>
-                    <input type="number" class="form-control" id="telefono" placeholder="Ingrese el telefono" name="telefono" required>
+                    <input type="number" class="form-control" id="telefono" placeholder="Ingrese el telefono" name="telefono" value="<?php echo $usuario[0]['telefono']; ?>" required>
                 </div>
 
-                <button type="submit" class="btn btn-info w-100">Registrar</button>
+                <button type="submit" onclick="return confirmar_edicion()" class="btn btn-info w-100">Editar</button>
+                <button type="button" onclick="cancelar_edicion()" class="btn btn-danger w-100">Cancelar</button>
+
+                <?php
+                    echo '
+                        <script>
+                            function cancelar_edicion() {
+                                var confirmar = confirm("¿Estás seguro de quieres dejar de editar?")
+
+                                if(!confirmar) return
+                                
+                                window.location.href = "./panel_usuarios.php";
+                            }
+
+                            function confirmar_edicion() {
+                                return confirm("¿Estás seguro de quieres editar este usuario?");
+                            }
+                        </script>
+                    '
+                ?>
+
             </form>
         </div>
     </div>

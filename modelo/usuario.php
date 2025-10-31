@@ -40,6 +40,17 @@ class Usuario{
         return $resu;
     }
 
+    // Obtener usuario por id
+    public function obtener_usuario_id($id_usuario) {
+        $sql = "SELECT * FROM usuario WHERE id_usuario = :id_usuario";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id_usuario'=>$id_usuario]);
+        // Retorna todos los usuarios como un array asociativo
+        $resu = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resu;
+    }
+
     // Crear o registrar un usuario
     public function crear_usuario($rol, $nombre, $documento, $correo, $telefono, $contrasena){
         //$pass = password_hash("admin1234", PASSWORD_BCRYPT);  -> HAY QUE ENCRIPTAR
@@ -47,6 +58,15 @@ class Usuario{
         $consul = $this->db->prepare($sql);
 
         return $consul->execute([':rol'=>$rol,':nombre'=>$nombre, ':documento'=>$documento, ':telefono'=>$telefono, ':correo'=>$correo, ':contrasena'=>$contrasena]);
+    }
+
+    // Editar un usuario
+    public function editar_usuario($id_usuario, $nombre, $rol, $documento, $correo, $telefono, $contrasena){
+        $sql = "UPDATE usuario SET nombres = :nombre, rol = :rol, documento = :documento, Correo = :correo, telefono = :telefono, contrasena = :contrasena WHERE id_usuario = :id_usuario";
+        $consul = $this->db->prepare($sql);
+        $consul->execute([':nombre'=>$nombre, ':rol'=>$rol, ':documento'=>$documento, ':correo'=>$correo, ':telefono'=>$telefono, ':contrasena'=>$contrasena, ':id_usuario'=>$id_usuario]);
+
+        return true;
     }
 
     // Eliminar un usuario
