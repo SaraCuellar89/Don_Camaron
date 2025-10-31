@@ -1,12 +1,11 @@
 <?php
-    session_start();
 
-    // Verificar si usuario está logueado
-    if (isset($_SESSION['usuario'])) {
-        // Obtener datos del usuario desde sesión
-        $usuario = $_SESSION['usuario'];
-        $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
-    }
+require_once "../controlador/usuario_controlador.php";
+
+$usuario_controlador = new Usuario_controlador();
+$id_usuario = $_GET['id_usuario'];
+$usuario = $usuario_controlador->obtener_usuario_id($id_usuario);
+
 ?>
 
 <!DOCTYPE html>
@@ -47,69 +46,79 @@
                     <li class="nav-item"><a class="nav-link" href="../index.php">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="./menu.php">Menú</a></li>
                     <li class="nav-item"><a class="nav-link" href="./sucursal.php">Sucursales</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="./Inicio_sesion.php">Inicio de sesion</a></li>
-                    <?php
-                        if(isset($usuario) && isset($usuario['rol']) && $usuario['rol'] === 'Administrador'){
-                            echo '
-                                <li class="nav-item"><a class="nav-link" href="./perfil_admin.php">Perfil</a></li>
-                            ';
-                        }
-                        else{
-                            echo '
-                                <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
-                            ';
-                        }
-                    ?>
+                    <li class="nav-item"><a class="nav-link" href="./Inicio_sesion.php">Inicio de sesion</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="./perfil.php">Perfil</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
+
     <!-- Formulario de registro -->
     <div class="container contact-container">
         <div class="card shadow p-4">
-            <h2 class="text-center mb-4">Registro</h2>
+            <h2 class="text-center mb-4">Editar Usuario</h2>
 
             <?php
                 if (isset($_SESSION['success_message'])) {
-                    echo '<div class="alert alert-success">Registro exitoso - <a href="./Inicio_sesion.php">Inicia Sesion</a></div>';
+                    echo '<div class="alert alert-success">Informacion actualizada correctamente - <a href="./perfil.php">Ir a tu Perfil</a></div>';
                     unset($_SESSION['success_message']);
                 }
             ?>
 
-            <form action="../controlador/acciones_usuario.php?accion=registrar" method="POST">
+            <form action="../controlador/acciones_usuario.php?accion=editar" method="POST">
+                <input type='hidden' name='id_usuario' value="<?php echo $usuario[0]['id_usuario']; ?>">
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre:</label>
-                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese un nombre" name="nombre" required>
+                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese un nombre" name="nombre" value="<?php echo $usuario[0]['nombres']; ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="documento" class="form-label">Documento:</label>
-                    <input type="number" class="form-control" id="documento" placeholder="Ingrese su documento" name="documento" required>
+                    <input type="number" class="form-control" id="documento" placeholder="Ingrese su documento" name="documento" value="<?php echo $usuario[0]['documento']; ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="rol" class="form-label">Rol:</label>
                     <select name="rol" id="rol" class="form-control" required>
-                        <option value="Cliente">Cliente</option>
+                        <option value="" hidden>Seleccionar</option>
+                        <option value="Cliente" <?php if($usuario[0]['rol'] == 'Cliente') echo 'selected'; ?>>Cliente</option>
+                        <option value="Admin" <?php if($usuario[0]['rol'] == 'Admin') echo 'selected'; ?>>Administrador</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="correo" class="form-label">Correo:</label>
-                    <input type="email" class="form-control" id="correo" placeholder="Ingrese su correo" name="correo" required>
+                    <input type="email" class="form-control" id="correo" placeholder="Ingrese su correo" name="correo" value="<?php echo $usuario[0]['Correo']; ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="contrasena" class="form-label">Contraseña:</label>
-                    <input type="password" class="form-control" id="contrasena" placeholder="Ingrese la contraseña" name="contrasena" required>
+                    <input type="password" class="form-control" id="contrasena" placeholder="Ingrese la contraseña" name="contrasena" value="<?php echo $usuario[0]['contrasena']; ?>" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="telefono" class="form-label">Telefono:</label>
-                    <input type="number" class="form-control" id="telefono" placeholder="Ingrese el telefono" name="telefono" required>
-                </div>
-                <div class="mb-3">
-                    <a href="./Inicio_sesion.php">¿Ya tienes cuenta?</a>
+                    <input type="number" class="form-control" id="telefono" placeholder="Ingrese el telefono" name="telefono" value="<?php echo $usuario[0]['telefono']; ?>" required>
                 </div>
 
-                <button type="submit" class="btn btn-info w-100">Registrar</button>
+                <button type="submit" onclick="return confirmar_edicion()" class="btn btn-info w-100">Editar</button>
+                <button type="button" onclick="cancelar_edicion()" class="btn btn-danger w-100">Cancelar</button>
+
+                <?php
+                    echo '
+                        <script>
+                            function cancelar_edicion() {
+                                var confirmar = confirm("¿Estás seguro de quieres dejar de editar?")
+
+                                if(!confirmar) return
+                                
+                                window.location.href = "./perfil.php";
+                            }
+
+                            function confirmar_edicion() {
+                                return confirm("¿Estás seguro de quieres editar este usuario?");
+                            }
+                        </script>
+                    '
+                ?>
+
             </form>
         </div>
     </div>

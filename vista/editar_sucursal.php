@@ -1,12 +1,11 @@
 <?php
-    session_start();
 
-    // Verificar si usuario está logueado
-    if (isset($_SESSION['usuario'])) {
-        // Obtener datos del usuario desde sesión
-        $usuario = $_SESSION['usuario'];
-        $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
-    }
+require_once "../controlador/sucursal_controlador.php";
+
+$sucursal_controlador = new Sucursal();
+$id_sucursal = $_GET['id_sucursal'];
+$sucursal = $sucursal_controlador->obtener_sucursal_id($id_sucursal);
+
 ?>
 
 <!DOCTYPE html>
@@ -48,68 +47,92 @@
                     <li class="nav-item"><a class="nav-link" href="./menu.php">Menú</a></li>
                     <li class="nav-item"><a class="nav-link" href="./sucursal.php">Sucursales</a></li>
                     <li class="nav-item"><a class="nav-link active" href="./Inicio_sesion.php">Inicio de sesion</a></li>
-                    <?php
-                        if(isset($usuario) && isset($usuario['rol']) && $usuario['rol'] === 'Administrador'){
-                            echo '
-                                <li class="nav-item"><a class="nav-link" href="./perfil_admin.php">Perfil</a></li>
-                            ';
-                        }
-                        else{
-                            echo '
-                                <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
-                            ';
-                        }
-                    ?>
+                    <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Formulario de registro -->
+
+    <!-- Segunda barra de navegacion -->        
+    <nav class="navbar navbar-expand-lg bg-info navbar-dark" style="margin:10px 20px; border-radius: 20px; border: solid 2px rgb(13, 56, 94);">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav2">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav2">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="./perfil_admin.php">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./panel_usuarios.php">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./panel_menu.php">Menu</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">Sucursales</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Formulario de edicion de platos -->
     <div class="container contact-container">
         <div class="card shadow p-4">
-            <h2 class="text-center mb-4">Registro</h2>
+            <h2 class="text-center mb-4">Editar Plato</h2>
 
             <?php
                 if (isset($_SESSION['success_message'])) {
-                    echo '<div class="alert alert-success">Registro exitoso - <a href="./Inicio_sesion.php">Inicia Sesion</a></div>';
+                    echo '<div class="alert alert-success">Plato actualizado correctamente - <a href="./panel_sucursal.php">Ir a Panel Sucursal</a></div>';
                     unset($_SESSION['success_message']);
                 }
             ?>
 
-            <form action="../controlador/acciones_usuario.php?accion=registrar" method="POST">
+            <form action="../controlador/acciones_sucursal.php?accion=editar" method="POST" enctype="multipart/form-data">
+                
+                <input type='hidden' name='id_sucursal' value="<?php echo $sucursal[0]['id_sucursal']; ?>">
+
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre:</label>
-                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese un nombre" name="nombre" required>
+                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre" name="nombre" value="<?php echo $sucursal[0]['nombre']; ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label for="documento" class="form-label">Documento:</label>
-                    <input type="number" class="form-control" id="documento" placeholder="Ingrese su documento" name="documento" required>
+                    <label for="direccion" class="form-label">Direccion:</label>
+                    <input type="text" class="form-control" id="direccion" placeholder="Ingrese la direccion" name="direccion" value="<?php echo $sucursal[0]['direccion']; ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label for="rol" class="form-label">Rol:</label>
-                    <select name="rol" id="rol" class="form-control" required>
-                        <option value="Cliente">Cliente</option>
-                    </select>
+                    <label class="form-label">Imagen actual:</label>
+                    <img src="../uploads/<?php echo $sucursal[0]['imagen']; ?>"class='img-fluid' alt='' style='width: 80px; height: 80px; object-fit: contain; border-radius: 8px;'>
                 </div>
                 <div class="mb-3">
-                    <label for="correo" class="form-label">Correo:</label>
-                    <input type="email" class="form-control" id="correo" placeholder="Ingrese su correo" name="correo" required>
+                    <label for="imagen" class="form-label">Imagen:</label>
+                    <input type="file" class="form-control" id="imagen" placeholder="Ingrese la imagen" name="imagen" accept="image/*" required>
                 </div>
                 <div class="mb-3">
-                    <label for="contrasena" class="form-label">Contraseña:</label>
-                    <input type="password" class="form-control" id="contrasena" placeholder="Ingrese la contraseña" name="contrasena" required>
+                    <label for="total_mesas" class="form-label">Total Mesas:</label>
+                    <input type="number" class="form-control" id="total_mesas" placeholder="Ingrese el total de las mesas" name="total_mesas" value="<?php echo $sucursal[0]['total_mesas']; ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="mesas_disponibles" class="form-label">Mesas Disponibles:</label>
+                    <input type="number" class="form-control" id="mesas_disponibles" placeholder="Ingrese la cantidad de mesas disponibles" name="mesas_disponibles" value="<?php echo $sucursal[0]['mesas_disponibles']; ?>" required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="telefono" class="form-label">Telefono:</label>
-                    <input type="number" class="form-control" id="telefono" placeholder="Ingrese el telefono" name="telefono" required>
-                </div>
-                <div class="mb-3">
-                    <a href="./Inicio_sesion.php">¿Ya tienes cuenta?</a>
-                </div>
+                <button type="submit" onclick="return confirmar_edicion()" class="btn btn-info w-100">Editar</button>
+                <button type="button" onclick="cancelar_edicion()" class="btn btn-danger w-100">Cancelar</button>
 
-                <button type="submit" class="btn btn-info w-100">Registrar</button>
+                <?php
+                    echo '
+                        <script>
+                            function cancelar_edicion() {
+                                var confirmar = confirm("¿Estás seguro de quieres dejar de editar?")
+
+                                if(!confirmar) return
+                                
+                                window.location.href = "./panel_sucursal.php";
+                            }
+
+                            function confirmar_edicion() {
+                                return confirm("¿Estás seguro de quieres editar este usuario?");
+                            }
+                        </script>
+                    '
+                ?>
             </form>
         </div>
     </div>
