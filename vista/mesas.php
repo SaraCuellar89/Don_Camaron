@@ -65,45 +65,57 @@
             </div>
         </div>
     </nav>
+    
 
    
-    <!-- Tarjetas del Menú -->
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">Sucursales</h1>
-        <div class="row justify-content-center">
-            <?php
-                foreach ($lista_sucursal as $s) {
-                    echo '
-                        <!-- Tarjeta sucursal -->
-                        <div class="col-md-8 mb-4">
-                            <div class="card d-flex flex-row align-items-stretch shadow-sm" 
-                                style="max-width: 900px; margin: 0 auto; border-radius: 10px; overflow: hidden;">
-                                
-                                <!-- Imagen -->
-                                <div style="flex: 1;">
-                                    <img class="img-fluid" 
-                                        src="../uploads/' . htmlspecialchars($s['imagen']) . '" 
-                                        alt="Imagen de sucursal" 
-                                        style="width: 100%; height: 100%; object-fit: cover;">
-                                </div>
-                                
-                                <!-- Contenido -->
-                                <div class="card-body text-center d-flex flex-column justify-content-center" 
-                                    style="flex: 1.2; padding: 30px;">
-                                    <h4 class="card-title mb-2">' . htmlspecialchars($s['nombre']) . '</h4>
-                                    <h5 class="text-primary mb-3">' . htmlspecialchars($s['direccion']) . '</h5>
-                                    <p class="card-text mb-2">Total de mesas: ' . htmlspecialchars($s['total_mesas']) . '</p>
-                                    <p class="card-text mb-4">Mesas disponibles: ' . htmlspecialchars($s['mesas_disponibles']) . '</p>
-                                    <a href="./mesas.php" 
-                                        class="btn btn-info w-50 mx-auto">Reservar</a>
-                                </div>
-                            </div>
-                        </div>
-                    ';
-                    }
-                ?>
+    <!-- Mesas -->
+     <div class="contenedor_mesas">
+        <h1>Seleccione su mesa</h1>
+        <div id="caja_mesas">
+            <div class="mesas"></div>
         </div>
-    </div>
+
+        <button class="boton_siguiente" onclick="Finalizar_Seleccion()">Siguiente</button>
+     </div>
+
+     <script>
+        const array_mesas = []
+
+        for(let i = 0; i<30; i++){
+            array_mesas.push(i+1)
+        }
+
+        const caja_mesas = document.getElementById('caja_mesas')
+
+        caja_mesas.innerHTML = array_mesas.map(m => `
+            <div class="mesas" onclick="Seleccionar(this, ${m})">${m}</div>
+        `).join('')
+
+        
+        const mesas_seleccionadas = []
+
+        function Seleccionar(mesa, id_mesa) {
+            mesa.classList.toggle('seleccionada');
+
+            if (mesa.classList.contains('seleccionada')) {
+                // Si está seleccionada, agregar al array
+                mesas_seleccionadas.push(id_mesa);
+            } else {
+                // Si se deseleccionó, quitar del array
+                const index = mesas_seleccionadas.indexOf(id_mesa);
+                if (index > -1) {
+                    mesas_seleccionadas.splice(index, 1);
+                }
+            }
+        }
+
+        function Finalizar_Seleccion(){
+            console.log(mesas_seleccionadas)
+        }
+
+     </script>
+
+     
 
 
     <!-- Footer -->
