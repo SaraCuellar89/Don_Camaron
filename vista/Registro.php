@@ -1,5 +1,12 @@
 <?php
-session_start();
+    session_start();
+
+    // Verificar si usuario está logueado
+    if (isset($_SESSION['usuario'])) {
+        // Obtener datos del usuario desde sesión
+        $usuario = $_SESSION['usuario'];
+        $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
+    }
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +48,18 @@ session_start();
                     <li class="nav-item"><a class="nav-link" href="./menu.php">Menú</a></li>
                     <li class="nav-item"><a class="nav-link" href="./sucursal.php">Sucursales</a></li>
                     <li class="nav-item"><a class="nav-link active" href="./Inicio_sesion.php">Inicio de sesion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
+                    <?php
+                        if(isset($usuario) && isset($usuario['rol']) && $usuario['rol'] === 'Administrador'){
+                            echo '
+                                <li class="nav-item"><a class="nav-link" href="./perfil_admin.php">Perfil</a></li>
+                            ';
+                        }
+                        else{
+                            echo '
+                                <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
+                            ';
+                        }
+                    ?>
                 </ul>
             </div>
         </div>

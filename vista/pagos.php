@@ -1,3 +1,18 @@
+<?php
+  $total = $_GET['total'];
+
+  session_start();
+
+    // Verificar si usuario está logueado
+    if (isset($_SESSION['usuario'])) {
+        // Obtener datos del usuario desde sesión
+        $usuario = $_SESSION['usuario'];
+        $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
+        $id_usuario = isset($usuario['id_usuario']) ? $usuario['id_usuario'] : 'ID no disponible';
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,14 +46,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="../index.php">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="./menu.php">Menú</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./sobre.php">Sobre nosotros</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./contacto.php">Contacto</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">Reservas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./Inicio.php">Ordena Online</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./sucursales.php">Sucursales</a></li>
                     <li class="nav-item"><a class="nav-link" href="./Inicio_sesion.php">Inicio de sesion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="">Perfil</a></li>
+                   </ul>
                 </ul>
             </div>
         </div>
@@ -54,7 +68,20 @@
                 <div class="col-md">
                     <div class="card shadow p-4">
                         <h2 class="text-center mb-4">Datos de compra</h2>
-                        <form>
+
+                        <?php
+                            $visible = false;
+
+                            if (isset($_SESSION['success_message'])) {
+                                echo '<div class="alert alert-success"><a href="./historial.php">Ver Pedidos</a></div>';
+                                unset($_SESSION['success_message']);
+                                $visible = true;
+                            }
+                        ?>
+
+                        <form action="../controlador/acciones_pedido.php?accion=crear" method="POST">
+
+                            <input type="text" name="id_usuario" id="id_usuario" value="<?php echo $id_usuario; ?>" hidden>
 
                             <div class="modal-body">
                                 <table class="table">
@@ -65,7 +92,9 @@
                                     </thead>
                                     <tbody>
                                       <tr>
-                                        <td>$xxx.xxxx</td>
+                                        <td class="fw-bold text-success fs-4">
+                                            $<?php echo number_format($total, 0, ',', '.'); ?>
+                                        </td>
                                       </tr>
                                     </tbody>
                                   </table>
@@ -127,25 +156,23 @@
                                     </tbody>
                                   </table>
                             </div>
+
                             <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre:</label>
-                                <input type="text" class="form-control" id="nombre" placeholder="Ingrese su nombre" name="nombre" required>
+                                <label for="direccion" class="form-label">Direccion de Entrega:</label>
+                                <input type="text" class="form-control" id="direccion" placeholder="Ingrese una direccion" name="direccion" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Correo:</label>
-                                <input type="email" class="form-control" id="email" placeholder="Ingrese su correo" name="email" required>
+
+                            <div class="row justify-content-center">
+                                <div class="col-auto">
+                                  <?php if(!$visible): ?>
+                                      <button type="button" id="btnFinal" class="btn btn-info">Final Compra</button>
+                                      <button type="button" class="btn btn-danger" onclick='return confirmar()'>Cancelar</button>
+                                  <?php else: ?>
+                                      <button type="button" id="btnFinal" class="btn btn-info" disabled>Final Compra</button>
+                                  <?php endif; ?>
+                                    
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="tel" class="form-label">Telefono:</label>
-                                <input type="tel" class="form-control" id="telefono" placeholder="Ingrese su número telefonico" name="password" required maxlength="10">
-                            </div>
-                            <div class="mb-3">
-                                <label for="direccion" class="form-label">Domicilio:</label>
-                                <input type="text" class="form-control" id="telefono" placeholder="Ingrese su dirección" name="direccion">
-                            </div>
-                            <div class="form-check mb-3">
-                            </div>
-                            <button type="reset" class="btn btn-info w-100">Reset</button>
                         </form>
                     </div>
                 </div>
@@ -155,13 +182,7 @@
     </div>
         
     
-         <!-- Reservar -->
-            <div class="container" style="width: 40%; margin-top: 40px; margin-bottom: 100px; padding: 30px;">
-                <div style="display: flex; justify-content: center;gap: 30px;">
-                    <button type="button" class="btn btn-primary bg-info text-dark" data-bs-toggle="modal" data-bs-target="#myModal" style="padding: 30px; border-radius: 20px; border: dashed 5px rgb(62, 128, 204);"><h2>Finalizar Compra</h2></button>
-                    <a href="./carrito.php" class="btn text-light" style="padding: 30px; border-radius: 20px; background-color: rgb(151, 49, 49); border: dashed 5px rgb(109, 35, 22); display: flex; align-items: center;"><h2>Cancelar</h2></a>
-                </div>
-            </div>
+         
 
         <!-- Modal de boton de reserva -->
     <div class="modal" id="myModal">
@@ -178,16 +199,31 @@
           <hr>
           ¡Gracias por confiar en nosotros!
         </div>
-
-        <div class="modal-footer">
-          <a href="./Inicio.php"><button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button></a>
-        </div>
   
       </div>
     </div>
     </div>
 
 
+    <script>
+      document.getElementById('btnFinal').addEventListener('click', function(e) {
+
+          const direccion = document.getElementById('direccion').value.trim();
+
+          // Validación direccion
+          if (direccion === "") {
+              alert("Por favor ingresa una dirección");
+              return;
+    }
+          // Mostrar modal
+          var modal = new bootstrap.Modal(document.getElementById('myModal'));
+          modal.show();
+
+          setTimeout(() => {
+              document.querySelector('form').submit();
+          }, 2000);
+      });
+    </script>
     
 
  <!-- Footer -->

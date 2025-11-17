@@ -10,6 +10,7 @@ if (!isset($_SESSION['usuario'])) {
 // Obtener datos del usuario desde sesión
 $usuario = $_SESSION['usuario'];
 
+$id_usuario = isset($usuario['id_usuario']) ? $usuario['id_usuario'] : 'Id no disponible';
 $nombre = isset($usuario['nombres']) ? $usuario['nombres'] : 'Nombre no disponible';
 $documento = isset($usuario['documento']) ? $usuario['documento'] : 'Documento no disponible';
 $correo = isset($usuario['Correo']) ? $usuario['Correo'] : 'Correo no disponible';
@@ -57,7 +58,7 @@ $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
                     <li class="nav-item"><a class="nav-link" href="./menu.php">Menú</a></li>
                     <li class="nav-item"><a class="nav-link" href="./sucursales.php">Sucursales</a></li>
                     <li class="nav-item"><a class="nav-link" href="./Inicio_sesion.php">Inicio de sesion</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">Perfil</a></li>
                 </ul>
             </div>
         </div>
@@ -75,6 +76,7 @@ $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
                     <li class="nav-item"><a class="nav-link active" href="#">Perfil</a></li>
                     <li class="nav-item"><a class="nav-link" href="./carrito.php">Carrito</a></li>
                     <li class="nav-item"><a class="nav-link" href="./historial.php">Historial de Pedidos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./reservas_cliente.php">Reservas</a></li>
                 </ul>
             </div>
         </div>
@@ -99,7 +101,7 @@ $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
             <div class="row justify-content-center">
                 <div class="col-auto">
                     <a href="../controlador/acciones_usuario.php?accion=cerrar" class="btn btn-danger" onclick='return confirmar()'>Cerrar Sesion</a>
-                    <a class="btn btn-info">Editar Perfil</a>
+                    <a href="./editar_perfil_usuario.php?id_usuario=<?php echo htmlspecialchars($id_usuario); ?>" class="btn btn-info">Editar Perfil</a>
                 </div>
             </div>
 

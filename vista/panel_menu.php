@@ -55,7 +55,9 @@
                     <li class="nav-item"><a class="nav-link" href="./perfil_admin.php">Perfil</a></li>
                     <li class="nav-item"><a class="nav-link" href="./panel_usuarios.php">Usuarios</a></li>
                     <li class="nav-item"><a class="nav-link active" href="#">Menu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="">Sucursales</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./panel_sucursal.php">Sucursales</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./panel_reservas.php">Reservas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./panel_pedidos.php">Pedidos</a></li>
                 </ul>
             </div>
         </div>

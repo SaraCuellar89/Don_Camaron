@@ -7,7 +7,7 @@ try{
     //Instanciar clase para la conexion
     $db = Database::connect();
 
-    $email = "admin@gmail.com";
+    $email = "admin@admin.com";
 
     //Consultar existencia de ese usuario
     $consul = $db -> prepare("SELECT * FROM usuario WHERE Correo = :email");
@@ -15,10 +15,10 @@ try{
 
     //registrar los datos de usuario
     if(!$consul -> fetch()){
-        $pass = password_hash("admin1234", PASSWORD_BCRYPT);
+        $pass = password_hash("admin_1234", PASSWORD_BCRYPT);
 
         //Crear insert
-        $sql = "INSERT INTO usuario (Nombre, Correo, Contrasena, Rol, Telefono) VALUES('Admin', :email, :clave, 'Administrador', '3000000')";
+        $sql = "INSERT INTO usuario (nombres, Correo, contrasena, rol, telefono) VALUES('Admin', :email, :clave, 'Administrador', '1000000')";
 
         $consulta = $db -> prepare($sql);
         $consulta -> execute([":email" => $email, ":clave" => $pass]);

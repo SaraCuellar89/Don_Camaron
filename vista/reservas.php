@@ -1,3 +1,21 @@
+<?php
+    session_start();
+
+    // Verificar si usuario está logueado
+    if (isset($_SESSION['usuario'])) {
+        // Obtener datos del usuario desde sesión
+        $usuario = $_SESSION['usuario'];
+        $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
+        $id_usuario = isset($usuario['id_usuario']) ? $usuario['id_usuario'] : 'ID no disponible';
+    }
+
+    $mesasStr = $_GET['mesas'];
+    $id_sucursal = $_GET['id_sucursal'];
+
+    // Convertimos el string en un array
+    $mesasSeleccionadas = explode(',', $mesasStr);
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,12 +49,20 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="../index.php">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="./menu.php">Menú</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./sobre.php">Sobre nosotros</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./contacto.php">Contacto</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">Reservas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./Inicio.php">Ordena Online</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="./sucursales.php">Sucursales</a></li>
                     <li class="nav-item"><a class="nav-link" href="./Inicio_sesion.php">Inicio de sesion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
+                    <?php
+                        if(isset($usuario) && isset($usuario['rol']) && $usuario['rol'] === 'Administrador'){
+                            echo '
+                                <li class="nav-item"><a class="nav-link" href="./perfil_admin.php">Perfil</a></li>
+                            ';
+                        }
+                        else{
+                            echo '
+                                <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
+                            ';
+                        }
+                    ?>
                 </ul>
             </div>
         </div>
@@ -48,50 +74,29 @@
         <div class="container">
             <div class="row">
 
-                <!-- Detos del usuario -->
-                <div class="col-md">
-                    <div class="card shadow p-4">
-                        <h2 class="text-center mb-4">Datos de usuario</h2>
-                        <form>
-                            <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre:</label>
-                                <input type="text" class="form-control" id="nombre" placeholder="Ingrese su nombre" name="nombre" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Correo:</label>
-                                <input type="email" class="form-control" id="email" placeholder="Ingrese su correo" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="tel" class="form-label">Telefono:</label>
-                                <input type="tel" class="form-control" id="telefono" placeholder="Ingrese su número telefonico" name="password" required maxlength="10">
-                            </div>
-                            <div class="mb-3">
-                                <label for="mensaje" class="form-label">Mensaje:</label>
-                                <textarea class="form-control" rows="5" id="mensaje" name="mensaje" placeholder="Escribe tu mensaje aquí..." required style="height: 100px;"></textarea>
-                            </div>
-                            <div class="form-check mb-3">
-                            </div>
-                            <button type="reset" class="btn btn-info w-100">Reset</button>
-                        </form>
-                    </div>
-                </div>
-    
                 <!-- Datos de la reserva -->
                 <div class="col-md">
                     <div class="card shadow p-4">
                         <h2 class="text-center mb-4">Datos de reserva</h2>
-                        <form>
+
+                        <?php
+                            $visible = false;
+
+                            if (isset($_SESSION['success_message'])) {
+                                echo '<div class="alert alert-success">Reserva creada - <a href="./reservas_cliente.php">Ver Reserva</a></div>';
+                                unset($_SESSION['success_message']);
+                                $visible = true;
+                            }
+                        ?>
+
+                        <form action="../controlador/acciones_reserva.php?accion=crear" method="POST">
                             <div class="mb-3">
-                                <label for="date" class="form-label">Fecha:</label>
-                                <input type="date" class="form-control" id="fecha" name="date" required>
+                                <label for="fecha" class="form-label">Fecha:</label>
+                                <input type="date" class="form-control" id="fecha" name="fecha" required min="<?php echo date('Y-m-d'); ?>">
                             </div>
                             <div class="mb-3">
-                                <label for="time" class="form-label">Hora:</label>
-                                <input type="time" class="form-control" id="hora" name="time" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Número de personas:</label>
-                                <input type="number" class="form-control" id="numero" placeholder="Maximo 10" name="number" required min="1" max="10">
+                                <label for="hora" class="form-label">Hora:</label>
+                                <input type="time" class="form-control" id="hora" name="hora" required min="09:00" max="21:00">
                             </div>
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" id="rememberMe">
@@ -99,19 +104,25 @@
                                     Recordarme
                                 </label>
                             </div>
-                            <button type="reset" class="btn btn-info w-100">Reset</button>
+
+                            <input type="text" name="id_usuario" id="id_usuario" value="<?php echo $id_usuario; ?>" hidden>
+                            <input type="text" name="id_sucursal" id="id_sucursal" value="<?php echo $id_sucursal ?>" hidden>
+                            <?php foreach($mesasSeleccionadas as $mesa): ?>
+                                <input type="hidden" name="mesas[]" value="<?php echo $mesa; ?>">
+                            <?php endforeach; ?>
+
+                            <?php if(!$visible): ?>
+                                <button type="submit" class="btn btn-info w-100">Reservar</button>
+                                <a href="sucursales.php" class="btn btn-danger w-100">Cancelar</a>
+                            <?php else: ?>
+                                <button type="submit" class="btn btn-info w-100" disabled>Reservar</button>
+                            <?php endif; ?>
                         </form>
+
                     </div>
                 </div>
             </div>
         </div>
-
-         <!-- Reservar -->
-            <div class="container" style="width: 20%; margin-top: 40px; margin-bottom: 100px; padding: 30px;">
-                <div style="display: flex; justify-content: center;">
-                    <button type="button" class="btn btn-primary bg-info text-dark" data-bs-toggle="modal" data-bs-target="#myModal" style="padding: 30px; border-radius: 20px; border: dashed 5px rgb(62, 128, 204);"><h2>Reservar</h2></button>
-                </div>
-            </div>
 
         <!-- Modal de boton de reserva -->
     <div class="modal" id="myModal">

@@ -1,0 +1,103 @@
+body {
+  font-family: 'Gill Sans', Calibri, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Fondo */
+#fondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.15;
+}
+
+/* Título */
+h1 {
+  font-weight: bold;
+  color: #1578a9;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Filtro */
+#filtro {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+#filtro:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0,191,255,0.4);
+}
+
+/* Tarjetas */
+.card {
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Botones cantidad */
+.btn-outline-info {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  transition: all 0.3s;
+}
+
+.btn-outline-info:hover {
+  background-color: #0dcaf0;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Botón añadir al pedido */
+.btn-ordenar {
+  display: none;
+  margin-top: 10px;
+  transition: all 0.4s ease;
+  background-color: #0dcaf0;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.btn-ordenar:hover {
+  background-color: #1578a9;
+  transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+  border: solid lightcyan;
+  border-style: double;
+  border-radius: 20px;
+  border-width: 7px;
+  background: rgba(0, 191, 255, 0.5);
+  margin-top: 50px;
+  color: #003b52;
+  padding-top: 20px;
+}
+
+/* Animación de filtro */
+.seccion-menu {
+  transition: all 0.5s ease;
+}
+
+.oculto {
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+}

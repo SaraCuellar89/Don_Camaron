@@ -1,3 +1,7 @@
+<?php
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -51,6 +55,7 @@
                     <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
                     <li class="nav-item"><a class="nav-link active" href="#">Carrito</a></li>
                     <li class="nav-item"><a class="nav-link" href="./historial.php">Historial de Pedidos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./reservas_cliente.php">Reservas</a></li>
                 </ul>
             </div>
         </div>
@@ -71,159 +76,113 @@
         </div>
 
         <!-- Carrito -->
-       <div class="container bg-light rounded" style="padding: 30px; margin-top: 30px;">
+       <?php
+            require_once "../modelo/carrito.php";
+            $carritoModelo = new Carrito_modelo();
 
-            <div style="display: flex; justify-content: center; align-items: center; margin: 30px;">
-                <h1 class="h1 bg-info text-center" style=" padding: 20px; border-radius: 20px; border: solid 5px rgb(43, 101, 148);">Carrito de compras</h1>
-            </div>
-
-            <!-- objeto 1 -->
-            <div id="pedido1" class="row" style="display: flex; align-items: center; border: dashed 4px rgb(26, 69, 104); padding: 30px; margin: 10px;">
-                <div class="col-md">
-                    <h3 class="text-center">Parrillada de Mariscos</h3>
-                    <img class="card-img-top" src="./img/parri_mariscox.jpg" alt="Cazuela de mariscos">
-                </div>
-
-                <div class="col-md">
-                    <h5 class="text-primary">$46.500</h5>
-                    <p class="card-text">Langostino, camarones, filete de salmón, filete blanco, calamar blanco
-                    y palmitos de cangrejo, todo en salsa BBQ. Acompañado de puré de papa y ensalada. </p>
-                </div>
-
-                <div class="col-md">
-                    <div style="display: flex; justify-content: center; flex-direction: column; gap: 30px;">
-                        <button id="bot1" type="button" class="btn btn-primary text-light" style="background-color: rgb(151, 49, 49); border-radius: 20px; border: dashed 3px rgb(94, 13, 13);"><h2>Eliminar</h2></button>
-
-                        <button id="bot1_2" type="button" class="btn btn-primary text-dark bg-info" style="border-radius: 20px; border: dashed 3px rgb(28, 29, 88);"><h2>Cambiar</h2></button>
+            $id_usuario = $_SESSION["usuario"]["id_usuario"];
+            $carrito = $carritoModelo->listar($id_usuario);
+        ?>
+        
+        <div class="container bg-light rounded mb-4" style="padding: 30px; margin-top: 30px;">
+            <h1 class="text-center mb-4">Carrito de Compras</h1>
+        
+            <?php if (empty($carrito)): ?>
+                <h3 class="text-center text-danger">Tu carrito está vacío</h3>
+            
+            <?php else: ?>
+            
+                <?php foreach ($carrito as $item): ?>
+                <div class="row mb-4 p-3" id="item-<?php echo $item['id_menu']; ?>" style="border: 2px dashed rgb(26, 69, 104); border-radius: 10px;">
+                    <div class="col-md-3 text-center">
+                        <img src="../uploads/<?php echo $item['imagen']; ?>" class="img-fluid rounded" style="width: 100px;">
+                        <h4><?php echo $item['nombre']; ?></h4>
+                    </div>
+                
+                    <div class="col-md-6">
+                        <h4>Cantidad: <?php echo $item['cantidad']; ?></h4>
+                        <h5 class="text-success precio-item"
+                            data-precio="<?php echo $item['precio']; ?>"
+                            data-cantidad="<?php echo $item['cantidad']; ?>">Total:
+                            $<?php echo number_format($item['precio'] * $item['cantidad'], 0, ',', '.'); ?>
+                        </h5>
+                    </div>
+                
+                    <div class="col-md-3 text-center">
+                        <button class="btn btn-danger eliminar" data-id="<?php echo $item['id_menu']; ?>">Eliminar</button>
                     </div>
                 </div>
+                <?php endforeach; ?>
+                
+                <hr>
+                <h3 id="totalCarrito" class="text-end text-success">
+                    Total general: 
+                    $<?php 
+                        echo number_format(array_sum(array_map(fn($i)=>$i['precio']*$i['cantidad'], $carrito)), 0, ',', '.');
+                    ?>
+                </h3>
 
-                <!-- js de boton eliminar objeto 1-->
-                 <script>
-                    $(document).ready(function(){
-                        var p1=document.getElementById("bot1")
-                    p1.addEventListener("click", eliminar1)
-                    })
-
-                    function eliminar1(){
-                        $("#pedido1").remove()
-                        alert("Se eliminara Parrillada de Mariscos de carrito")
-                    }
-
-                    $(document).ready(function(){
-                        var p1=document.getElementById("bot1_2")
-                    p1.addEventListener("click", cambiar1)
-                    })
-
-                    function cambiar1(){
-                        alert("En este momento no se pueden cambiar objetos, intentelo mas tarde")
-                    }
-                 </script>
-
-            </div>
-
-
-            <!-- Objeto 2 -->
-
-            <div id="pedido2" class="row" style="display: flex; align-items: center; border: dashed 4px rgb(26, 69, 104); padding: 30px; margin: 10px;">
-                <div class="col-md">
-                    <h3 class="text-center">Salmón Teriyaki</h3>
-                    <img class="card-img-top" src="./img/salmon_ty.jpg" alt="Camarones al ajillo">
+                <div class="d-flex justify-content-end">
+                    <a href="./pagos.php?total=<?php echo array_sum(array_map(fn($i)=>$i['precio']*$i['cantidad'], $carrito)); ?>" 
+                    class="btn btn-primary btn-lg">
+                        Hacer Compra
+                    </a>
                 </div>
+                
+            <?php endif; ?>
 
-                <div class="col-md">
-                    <h5 class="text-primary">$53.900</h5>
-                    <p class="card-text">Salmón a la plancha con salsa teriyaki, servido sobre una cama de verduras asadas. Acompañado de puré de papa.</p>
-                </div>
 
-                <div class="col-md">
-                    <div style="display: flex; justify-content: center; flex-direction: column; gap: 30px;">
-                        <button id="bot2" type="button" class="btn btn-primary text-light" style="background-color: rgb(151, 49, 49); border-radius: 20px; border: dashed 3px rgb(94, 13, 13);"><h2>Eliminar</h2></button>
-
-                        <button id="bot2_2" type="button" class="btn btn-primary text-dark bg-info" style="border-radius: 20px; border: dashed 3px rgb(28, 29, 88);"><h2>Cambiar</h2></button>
-                    </div>
-                </div>
-
-                <!-- js de boton eliminar objeto 2-->
-                 <script>
-                    $(document).ready(function(){
-                        var p2=document.getElementById("bot2")
-                    p2.addEventListener("click", eliminar2)
-                    })
-
-                    function eliminar2(){
-                        $("#pedido2").remove()
-                        alert("Se eliminara Salmón Teriyaki de carrito")
-                    }
-
-                    $(document).ready(function(){
-                        var p2=document.getElementById("bot2_2")
-                    p2.addEventListener("click", cambiar2)
-                    })
-
-                    function cambiar2(){
-                        alert("En este momento no se pueden cambiar objetos, intentelo mas tarde")
-                    }
-                 </script>
-
-            </div>
-       </div>
-
-       <!-- Domicilio -->
-        
-       <div class="container" style="width: 20%; margin-top: 40px; margin-bottom: 100px; padding: 30px;">
-        <div style="display: flex; justify-content: center;">
-            <button type="button" class="btn btn-primary bg-info text-dark" data-bs-toggle="modal" data-bs-target="#myModal" style="padding: 30px; border-radius: 20px; border: dashed 5px rgb(62, 128, 204);"><h2>Comprar</h2></button>
         </div>
-        </div>
+                
+        <script>
 
-        <!-- Modal de boton de reserva -->
-        <div class="modal fade" id="myModal">
-            <div class="modal-dialog">
-            <div class="modal-content">
-        
-                <div class="modal-header">
-                <h4 class="modal-title">Compra:</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-        
-                <div class="modal-body">
-                    <table class="table">
-                        <thead>
-                          <tr>
-                            <th>Total de la compra</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>$xxx.xxxx</td>
-                          </tr>
-                        </tbody>
-                      </table>
+        function actualizarTotalCarrito() {
+            let total = 0;
 
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>Pedido</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td><input type="radio" name="opcion" value="opcion1">Llegar a domicilio</td>
-                            <td><input type="radio" name="opcion" value="opcion2">Recoger en restaurante</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                </div>
-        
-                <div class="modal-footer">
-                    <a href="./pagos.php">  <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Ir a metodos de pago</button></a>
-                </div>
-        
-            </div>
-            </div>
-        </div>
+            document.querySelectorAll(".precio-item").forEach(pre => {
+                const precio = parseInt(pre.dataset.precio);
+                const cantidad = parseInt(pre.dataset.cantidad);
+                total += precio * cantidad;
+            });
+
+            const totalElement = document.getElementById("totalCarrito");
+            if (totalElement) {
+                totalElement.textContent = "Total general: $" + total.toLocaleString();
+            }
+        }
+
+        document.querySelectorAll(".eliminar").forEach(btn => {
+            btn.addEventListener("click", () => {
+
+                const id = btn.dataset.id;
+
+                fetch("../controlador/carrito_controlador.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({
+                        accion: "eliminar",
+                        id: id
+                    })
+                })
+                .then(r => r.json())
+                .then(resp => {
+
+                    if (resp.status === "ok") {
+
+                        // Quitar visualmente el item del carrito
+                        const item = document.getElementById("item-" + id);
+                        if (item) item.remove();
+
+                        // Recalcular total general
+                        actualizarTotalCarrito();
+                        window.location.reload()
+                    }
+                });
+
+            });
+        });
+        </script>
+
 
        
  <!-- Footer -->

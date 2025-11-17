@@ -1,3 +1,20 @@
+<?php
+    session_start();
+
+    // Verificar si usuario está logueado
+    if (isset($_SESSION['usuario'])) {
+        // Obtener datos del usuario desde sesión
+        $usuario = $_SESSION['usuario'];
+        $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
+    }
+
+    require_once "../controlador/sucursal_controlador.php";
+                        
+    $sucursal_controlador = new Sucursal_controlador();
+    $lista_sucursal = $sucursal_controlador->listar_sucursales();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,6 +31,9 @@
 </style>
 <body>
 
+    <!-- Fondo -->
+    <img id="fondo" src="./img/fondo.jpg" alt="Fondo del menú" class="w-100">
+
     <!-- Barra de navegación -->
     <nav class="navbar navbar-expand-lg bg-info navbar-dark">
         <div class="container">
@@ -29,161 +49,108 @@
                     <li class="nav-item"><a class="nav-link" href="./menu.php">Menú</a></li>
                     <li class="nav-item"><a class="nav-link active" href="#">Sucursales</a></li>
                     <li class="nav-item"><a class="nav-link" href="./Inicio_sesion.php">Inicio de sesion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
+                    <?php
+                        if(isset($usuario) && isset($usuario['rol']) && $usuario['rol'] === 'Administrador'){
+                            echo '
+                                <li class="nav-item"><a class="nav-link" href="./perfil_admin.php">Perfil</a></li>
+                            ';
+                        }
+                        else{
+                            echo '
+                                <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
+                            ';
+                        }
+                    ?>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Inicio carrusel fondo y contenido -->
-
-        <div id="demo" class="carousel slide" data-bs-ride="carousel">
-
-            <div class="carousel-inner">
-                <div class="carousel-item active" style="z-index: -1;">
-                    <img src="./img/coso4.jpg" alt="imagen1" data-bs-interval="1000" class="" style="width: 100%; height: 950px; opacity: 0.6;">
-                </div>
-                <div class="carousel-item" style="z-index: -1;">
-                    <img src="./img/restaurante.jpg" alt="imagen2" data-bs-interval="1000" class="" style="width: 100%; height: 950px; opacity: 0.6;">
-                </div>
-                <div class="carousel-item" style="z-index: -1;">
-                    <img src="./img/coso1.jpg" alt="imagen3" data-bs-interval="1000" class="" style="width: 100%; height: 950px; opacity: 0.6;">
-                </div>
-                <div class="carousel-item" style="z-index: -1;">
-                    <img src="./img/restauranteepordos.jpg" alt="imagen4" data-bs-interval="1000" class="" style="width: 100%; height: 950px; opacity: 0.6;">
-                </div>
-                <div class="container p-5 my-5 border" style="background-color:rgba(0, 174, 255, 0.842); opacity: 1; border-radius: 10px;">
-                    <h2 class="text-center" style="font-size: 60px;">Nuestra historia...</h2>
-            
-                    <p style="font-size: 20px;">Hace más de 30 años, en un pequeño puerto pesquero en la costa, un hombre llamado Don Manuel, conocido por su amor al mar, decidió abrir un restaurante. Había crecido en ese mismo puerto y conocía cada rincón del océano, los secretos de sus aguas y los tesoros que brindaba cada amanecer. Después de años de pescar junto a su padre y abuelos, sintió que el mar le había dado mucho, y que era hora de devolverle algo. Así nació "Don Kamaron", un modesto restaurante que en sus inicios solo ofrecía un menú pequeño de mariscos frescos traídos directamente de la pesca local. Don Manuel, con sus manos rústicas pero llenas de habilidad, preparaba todo con amor: camarones al ajillo, pescado frito, ceviches frescos y su especialidad, la cazuela de mariscos.</p>
-                </div>
-                
-                <div class="container p-5 my-5 border d-flex" style="background-color:rgba(0, 174, 255, 0.842); opacity: 1; display: block; border-radius: 20px; width: 50%">
-                    <div class="p-3">
-                    <img src="./img/bogota.jpg" alt="bogota" style="height: 250px; border-radius: 20px;">
-                 </div>
-                 <div>
-                    <h3 class="ps-5">Bogotá</h3>
-                    <br>
-                    <p>
-                        <b>Dirección:</b> Cra 19 #69-24
-                        <br>
-                        <br>
-                        <b>Número de contacto:</b> 10-000-000
-                        <br>
-                        <br>
-                        <b>Número celular:</b> 316 402 0478
-                    </p>
-                </div>
-                </div>
-
-                <div id="demo" class="carousel slide" data-bs-ride="carousel">
-
-                    <div class="carousel-inner">
-                        <div class="carousel-item active" style="z-index: -1;">
-                            <img src="./img/restauranteepordos.jpg" alt="imagen1" data-bs-interval="1000" class="" style="width: 100%; height: 950px; opacity: 0.6;">
+   
+    <!-- Tarjetas del Menú -->
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Sucursales</h1>
+        <div class="row justify-content-center">
+            <?php
+                foreach ($lista_sucursal as $s) {
+                    echo '
+                        <!-- Tarjeta sucursal -->
+                        <div class="col-md-8 mb-4">
+                            <div class="card d-flex flex-row align-items-stretch shadow-sm" 
+                                style="max-width: 900px; margin: 0 auto; border-radius: 10px; overflow: hidden;">
+                                
+                                <!-- Imagen -->
+                                <div style="flex: 1;">
+                                    <img class="img-fluid" 
+                                        src="../uploads/' . htmlspecialchars($s['imagen']) . '" 
+                                        alt="Imagen de sucursal" 
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                
+                                <!-- Contenido -->
+                                <div class="card-body text-center d-flex flex-column justify-content-center" 
+                                    style="flex: 1.2; padding: 30px;">
+                                    <h4 class="card-title mb-2">' . htmlspecialchars($s['nombre']) . '</h4>
+                                    <h5 class="text-primary mb-3">' . htmlspecialchars($s['direccion']) . '</h5>
+                                    <a href="./mesas.php?id_sucursal=' . htmlspecialchars($s['id_sucursal']) . '" 
+                                        class="btn btn-info w-50 mx-auto">Reservar</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="carousel-item" style="z-index: -1;">
-                            <img src="./img/coso1.jpg" alt="imagen2" data-bs-interval="1000" class="" style="width: 100%; height: 950px; opacity: 0.6;">
-                        </div>
-                        <div class="carousel-item" style="z-index: -1;">
-                            <img src="./img/restaurante.jpg" alt="imagen3" data-bs-interval="1000" class="" style="width: 100%; height: 950px; opacity: 0.6;">
-                        </div>
-                        <div class="carousel-item" style="z-index: -1;">
-                            <img src="./img/coso4.jpg" alt="imagen4" data-bs-interval="1000" class="" style="width: 100%; height: 950px; opacity: 0.6;">
-                        </div>
-
-                <div class="container p-5 my-5 border d-flex" style="background-color:rgba(0, 174, 255, 0.842); opacity: 1; display: block; border-radius: 20px; width: 50%;">
-                    <div class="p-3">
-                    <img src="./img/medellin.jpg" alt="bogota" style="height: 250px; width: 450px; border-radius: 20px;">
-                 </div>
-                 <div>
-                    <h3 class="ps-5">Medellín</h3>
-                    <br>
-                    <p>
-                        <b>Dirección:</b> Cl 10 #32-115
-                        <br>
-                        <br>
-                        <b>Número de contacto:</b> 20-000-000
-                        <br>
-                        <br>
-                        <b>Número celular:</b> 316 402 0478
-                    </p>
-                </div>
-                </div>
-
-                <div class="container p-5 my-5 border d-flex" style="background-color:rgba(0, 174, 255, 0.842); opacity: 1; display: block; border-radius: 20px; width: 50%">
-                    <div class="p-3">
-                    <img src="./img/cali.jpg" alt="bogota" style="height: 250px; width: 450px; border-radius: 20px;">
-                 </div>
-                 <div>
-                        <h3 class="ps-5">Cali</h3>
-                    <br>
-                    <p>
-                        <b>Dirección:</b> Cra. 23b #7-34
-                        <br>
-                        <br>
-                        <b>Número de contacto:</b> 30-000-000
-                        <br>
-                        <br>
-                        <b>Número celular:</b> 316 402 0478
-                    </p>
-                </div>
-                </div>
-
-
-                </div>
-            </div>
-            
+                    ';
+                    }
+                ?>
         </div>
+    </div>
+
 
     <!-- Footer -->
 
-    <footer class="text-center footer-style py-2"  style="border: solid lightcyan; border-style: double; border-radius: 20px; border-width: 7px; background:rgba(0, 162, 255, 0.712);">
-        <div class="container">
-          <div class="row">
-         
-         <div class="col-md-4 footer-col">
-         <h4><b>Contacto</b></h4>
-         <p>
-            <b>Correo:</b> donkamaronmariscos@restaurante.com
-            <br>      
+<footer class="text-center footer-style"  style="border: solid lightcyan; border-style: double; border-radius: 20px; border-width: 7px; background:rgba(0, 191, 255, 0.5);">
+  <div class="container">
+    <div class="row">
+   
+   <div class="col-md-4 footer-col">
+   <h4><b>Contacto</b></h4>
+   <p>
+      <b>Correo:</b> donkamaronmariscos@restaurante.com
+      <br>      
+      <br>
+      <b>Celular:</b> 316 4020478 
+      <br>
+      <br>
+      <b>Número telefónico:</b> (061) 01001 678594
+   </p>
+    </div>
+
+    <div class="col-md-4 footer-col">
+        <h4><b>Punto de venta</b></h4>
+        <p>
+            <b>Bogotá</b> Cra. 7 #158 - 03
             <br>
-            <b>Celular:</b> 316 4020478 
+            <br>
+            <b>Lunes - Viernes:</b> 7am - 4pm
             <br>
             <br>
-            <b>Número telefónico:</b> (061) 01001 678594
-         </p>
-          </div>
-      
-          <div class="col-md-4 footer-col">
-              <h4><b>Punto de venta</b></h4>
-              <p>
-                  <b>Bogotá</b> Cra. 7 #158 - 03
-                  <br>
-                  <br>
-                  <b>Lunes - Viernes:</b> 7am - 4pm
-                  <br>
-                  <br>
-                  <b>Sábado:</b> 7am - 2pm
-              </p>
-          </div>
-      
-          <div class="col-md-4 footer-col">
-              <h4><b>Nuestras redes</b></h4>
-              <ul class="list-inline d-flex" style="justify-content: center; align-items: center; padding: 10px;">
-                  <li>
-                      <img src="./img/feis.png"  type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="www.facebook.com" alt="feis" style="width: 80px; margin-right: 10px;">
-                  </li>
-                  <li>
-                      <img src="./img/insta.png" type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="www.instagram.com" alt="insta" style="width: 80px; margin-left: 10px; margin-right: 10px;">
-                  </li>
-                  <li>
-                      <img src="./img/wasat.png" type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="wwww.wa.me.325346.com" alt="wasat" style="width: 80px; margin-left: 10px;">
-                  </li>
-              </ul>
-          </div>
-      </footer>
+            <b>Sábado:</b> 7am - 2pm
+        </p>
+    </div>
+
+    <div class="col-md-4 footer-col">
+        <h4><b>Nuestras redes</b></h4>
+        <ul class="list-inline d-flex" style="justify-content: center; align-items: center; padding: 10px;">
+            <li>
+                <img src="../vista/img/feis.png"  type="button" title="www.facebook.com" alt="feis" style="width: 80px; margin-right: 10px;">
+            </li>
+            <li>
+                <img src="../vista/img/insta.png" type="button" title="www.instagram.com" alt="insta" style="width: 80px; margin-left: 10px; margin-right: 10px;">
+            </li>
+            <li>
+                <img src="../vista/img/wasat.png" type="button" title="wwww.wa.me.325346.com" alt="wasat" style="width: 80px; margin-left: 10px;">
+            </li>
+        </ul>
+    </div>
+</footer>
        </div>
       </div>
 

@@ -1,7 +1,5 @@
 <?php
 
-session_start(); 
-
 require_once "../configuracion/conexion.php";
 require_once "../modelo/menu.php";
 

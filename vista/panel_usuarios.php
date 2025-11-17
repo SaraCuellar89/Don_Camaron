@@ -37,7 +37,7 @@
                     <li class="nav-item"><a class="nav-link" href="./menu.php">Menú</a></li>
                     <li class="nav-item"><a class="nav-link" href="./sucursales.php">Sucursal</a></li>
                     <li class="nav-item"><a class="nav-link" href="./Inicio_sesion.php">Inicio de sesion</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="./perfil.php">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#">Perfil</a></li>
                 </ul>
             </div>
         </div>
@@ -55,7 +55,9 @@
                     <li class="nav-item"><a class="nav-link" href="./perfil_admin.php">Perfil</a></li>
                     <li class="nav-item"><a class="nav-link active" href="#">Usuarios</a></li>
                     <li class="nav-item"><a class="nav-link" href="./panel_menu.php">Menu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="">Sucursales</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./panel_sucursal.php">Sucursales</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./panel_reservas.php">Reservas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./panel_pedidos.php">Pedidos</a></li>
                 </ul>
             </div>
         </div>

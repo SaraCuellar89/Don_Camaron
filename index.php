@@ -1,3 +1,14 @@
+<?php
+    session_start();
+
+    // Verificar si usuario está logueado
+    if (isset($_SESSION['usuario'])) {
+        // Obtener datos del usuario desde sesión
+        $usuario = $_SESSION['usuario'];
+        $rol = isset($usuario['rol']) ? $usuario['rol'] : 'Rol no disponible';
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +45,18 @@
                     <li class="nav-item"><a class="nav-link" href="./vista/menu.php">Menú</a></li>
                     <li class="nav-item"><a class="nav-link" href="./vista/sucursales.php">Sucursales</a></li>
                     <li class="nav-item"><a class="nav-link" href="./vista/Inicio_sesion.php">Inicio de sesion</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./vista/perfil.php">Perfil</a></li>
+                    <?php
+                        if(isset($usuario) && isset($usuario['rol']) && $usuario['rol'] === 'Administrador'){
+                            echo '
+                                <li class="nav-item"><a class="nav-link" href="./vista/perfil_admin.php">Perfil</a></li>
+                            ';
+                        }
+                        else{
+                            echo '
+                                <li class="nav-item"><a class="nav-link" href="./vista/perfil.php">Perfil</a></li>
+                            ';
+                        }
+                    ?>
                 </ul>
             </div>
         </div>
@@ -81,51 +103,6 @@
 </div>
 
 
-    <!-- Tarjetas del Menú -->
-    <div class="container mt-4">
-        <h2 class="text-center mb-4"><b>¡Menú del día!</b></h2>
-        <div class="row justify-content-center">
-            <!-- Cazuela de mariscos -->
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img class="card-img-top" src="./vista/img/cazuela.jpg" alt="Cazuela de mariscos">
-                    <div class="card-body text-center">
-                        <h4 class="card-title">Cazuela de Mariscos</h4>
-                        <h5 class="text-primary">$25.000</h5>
-                        <p class="card-text">Delicioso plato que combina mariscos, pescado, mejillones y una exquisita salsa 100% natural de la casa.</p>
-                        <a href="./vista/menu_online.php" class="btn btn-info">Comprar online</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ceviche -->
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img class="card-img-top" src="./vista/img/Ceviche.jpg" alt="Ceviche">
-                    <div class="card-body text-center">
-                        <h4 class="card-title">Ceviche</h4>
-                        <h5 class="text-primary">$30.000</h5>
-                        <p class="card-text">Plato de pescado o marisco crudo marinado en jugo de limón o lima, y acompañado de otros ingredientes. Su sabor picante lo hace irresistible.</p>
-                        <a href="./vista/menu_online.php" class="btn btn-info">Comprar online</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Camarones al ajillo -->
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img class="card-img-top" src="./vista/img/camarones.jpg" alt="Camarones al ajillo">
-                    <div class="card-body text-center">
-                        <h4 class="card-title">Camarones al Ajillo</h4>
-                        <h5 class="text-primary">$45.000</h5>
-                        <p class="card-text">Platillo que combina a la perfección los sabores intensos del ajo con la frescura de los camarones en una salsa deliciosa.</p>
-                        <a href="./vista/menu_online.php" class="btn btn-info">Comprar online</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
 
 <footer class="text-center footer-style"  style="border: solid lightcyan; border-style: double; border-radius: 20px; border-width: 7px; background:rgba(0, 191, 255, 0.5);">
@@ -162,26 +139,19 @@
         <h4><b>Nuestras redes</b></h4>
         <ul class="list-inline d-flex" style="justify-content: center; align-items: center; padding: 10px;">
             <li>
-                <img src="./vista/img/feis.png"  type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="www.facebook.com" alt="feis" style="width: 80px; margin-right: 10px;">
+                <img src="./vista/img/feis.png"  type="button" title="www.facebook.com" alt="feis" style="width: 80px; margin-right: 10px;">
             </li>
             <li>
-                <img src="./vista/img/insta.png" type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="www.instagram.com" alt="insta" style="width: 80px; margin-left: 10px; margin-right: 10px;">
+                <img src="./vista/img/insta.png" type="button" title="www.instagram.com" alt="insta" style="width: 80px; margin-left: 10px; margin-right: 10px;">
             </li>
             <li>
-                <img src="./vista/img/wasat.png" type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="wwww.wa.me.325346.com" alt="wasat" style="width: 80px; margin-left: 10px;">
+                <img src="./vista/img/wasat.png" type="button" title="wwww.wa.me.325346.com" alt="wasat" style="width: 80px; margin-left: 10px;">
             </li>
         </ul>
     </div>
 </footer>
  </div>
 </div>
-
-<script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
-</script>
 
 <script src="./vista/bootstrap-5.0.2-dist/js/bootstrap.bundle.js"></script>
 </body>

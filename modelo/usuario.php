@@ -21,7 +21,7 @@ class Usuario{
     public function login($email, $pass){
         $usuario = $this -> obtener_usuario(($email));
         
-        if($usuario && $pass === $usuario['contrasena']){
+        if($usuario && password_verify($pass, $usuario['contrasena'])){
             return $usuario;
         }
         else{
@@ -53,18 +53,31 @@ class Usuario{
 
     // Crear o registrar un usuario
     public function crear_usuario($rol, $nombre, $documento, $correo, $telefono, $contrasena){
-        //$pass = password_hash("admin1234", PASSWORD_BCRYPT);  -> HAY QUE ENCRIPTAR
+        
+        $pass_encriptada = password_hash($contrasena, PASSWORD_BCRYPT);
+
         $sql = "INSERT INTO usuario (rol, nombres, documento, telefono, Correo, contrasena) VALUES(:rol, :nombre, :documento, :telefono, :correo ,:contrasena )";
         $consul = $this->db->prepare($sql);
 
-        return $consul->execute([':rol'=>$rol,':nombre'=>$nombre, ':documento'=>$documento, ':telefono'=>$telefono, ':correo'=>$correo, ':contrasena'=>$contrasena]);
+        return $consul->execute([':rol'=>$rol,':nombre'=>$nombre, ':documento'=>$documento, ':telefono'=>$telefono, ':correo'=>$correo, ':contrasena'=>$pass_encriptada]);
     }
 
     // Editar un usuario
-    public function editar_usuario($id_usuario, $nombre, $rol, $documento, $correo, $telefono, $contrasena){
-        $sql = "UPDATE usuario SET nombres = :nombre, rol = :rol, documento = :documento, Correo = :correo, telefono = :telefono, contrasena = :contrasena WHERE id_usuario = :id_usuario";
+    public function editar_usuario($id_usuario, $nombre, $rol, $documento, $correo, $telefono, $contrasena = null){
+        // Si se proporcionó una nueva contraseña, la encriptamos
+        if ($contrasena) {
+            $contrasena = password_hash($contrasena, PASSWORD_BCRYPT);
+            $sql = "UPDATE usuario SET nombres = :nombre, rol = :rol, documento = :documento, Correo = :correo, telefono = :telefono, contrasena = :contrasena WHERE id_usuario = :id_usuario";
+            $params = [
+                ':nombre'=>$nombre, ':rol'=>$rol, ':documento'=>$documento, ':correo'=>$correo, ':telefono'=>$telefono, ':contrasena'=>$contrasena, ':id_usuario'=>$id_usuario];
+        } else {
+            // Si no se cambió la contraseña, no actualizamos ese campo
+            $sql = "UPDATE usuario SET nombres = :nombre, rol = :rol, documento = :documento, Correo = :correo, telefono = :telefono WHERE id_usuario = :id_usuario";
+            $params = [':nombre'=>$nombre, ':rol'=>$rol, ':documento'=>$documento, ':correo'=>$correo, ':telefono'=>$telefono, ':id_usuario'=>$id_usuario];
+        }
+
         $consul = $this->db->prepare($sql);
-        $consul->execute([':nombre'=>$nombre, ':rol'=>$rol, ':documento'=>$documento, ':correo'=>$correo, ':telefono'=>$telefono, ':contrasena'=>$contrasena, ':id_usuario'=>$id_usuario]);
+        $consul->execute($params);
 
         return true;
     }
