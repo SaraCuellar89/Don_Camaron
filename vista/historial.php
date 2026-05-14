@@ -15,6 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial de Pedidos</title>
     <link rel="stylesheet" href="./bootstrap-5.0.2-dist/css/bootstrap.min.css">
+    <script src="./bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <style> 
@@ -42,15 +43,19 @@
     </div>
 </nav>
 
-<nav class="navbar navbar-expand-lg bg-info navbar-dark" 
-     style="margin:10px 20px; border-radius: 20px; border: solid 2px rgb(13,56,94);">
+<nav class="navbar navbar-expand-lg bg-info navbar-dark" style="margin:10px 20px; border-radius: 20px; border: solid 2px rgb(13,56,94);">
     <div class="container">
-        <ul class="navbar-nav mx-auto">
-            <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
-            <li class="nav-item"><a class="nav-link" href="./carrito.php">Carrito</a></li>
-            <li class="nav-item"><a class="nav-link active" href="#">Historial de Pedidos</a></li>
-            <li class="nav-item"><a class="nav-link" href="./reservas_cliente.php">Reservas</a></li>
-        </ul>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav2">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav2">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="./perfil.php">Perfil</a></li>
+                <li class="nav-item"><a class="nav-link" href="./carrito.php">Carrito</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#">Historial de Pedidos</a></li>
+                <li class="nav-item"><a class="nav-link" href="./reservas_cliente.php">Reservas</a></li>
+            </ul>
+        </div>
     </div>
 </nav>
 

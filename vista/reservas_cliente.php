@@ -27,18 +27,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil</title>
     <link rel="stylesheet" href="./bootstrap-5.0.2-dist/css/bootstrap.min.css">
+    <script src="./bootstrap-5.0.2-dist/js/bootstrap.bundle.js"></script>
     <link rel="stylesheet" href="./css/style.css">
-</head>
-<style> 
-    body {
-        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    }
-    .contact-container {
-        max-width: 600px;
-        margin: 50px auto;
-    }
 
-</style>
+    <style> 
+        body {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        .contact-container {
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+    </style>
+</head>
+
 <body>
     <!-- Fondo -->
    
@@ -170,11 +173,10 @@
                   </li>
               </ul>
           </div>
-      </footer>
-       </div>
-      </div>
       
-
-<script src="./bootstrap-5.0.2-dist/js/bootstrap.bundle.js"></script>
+        </div>
+    </div>
+</footer>
+      
 </body>
 </html>

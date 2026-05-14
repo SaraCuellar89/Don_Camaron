@@ -113,18 +113,21 @@
                     </div>
                 </div>
                 <?php endforeach; ?>
+
+                <!-- ===== Calcular total una sola vez ===== -->
+                <?php 
+                    $totalGeneral = 0;
+                    foreach ($carrito as $i) $totalGeneral += $i['precio'] * $i['cantidad'];
+                ?>
                 
                 <hr>
+                
                 <h3 id="totalCarrito" class="text-end text-success">
-                    Total general: 
-                    $<?php 
-                        echo number_format(array_sum(array_map(fn($i)=>$i['precio']*$i['cantidad'], $carrito)), 0, ',', '.');
-                    ?>
+                    Total general: $<?php echo number_format($totalGeneral, 0, ',', '.'); ?>
                 </h3>
 
                 <div class="d-flex justify-content-end">
-                    <a href="./pagos.php?total=<?php echo array_sum(array_map(fn($i)=>$i['precio']*$i['cantidad'], $carrito)); ?>" 
-                    class="btn btn-primary btn-lg">
+                    <a href="./pagos.php?total=<?php echo $totalGeneral; ?>" class="btn btn-primary btn-lg">
                         Hacer Compra
                     </a>
                 </div>
