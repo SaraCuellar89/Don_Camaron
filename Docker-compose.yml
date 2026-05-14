@@ -1,0 +1,33 @@
+version: '3.9'
+ 
+services:
+ 
+  phpapp:
+    build: .
+    container_name: gestor_php
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+ 
+  db:
+    image: mysql:8
+    container_name: mysql_gestor
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: don_camaron
+    ports:
+      - "3306:3306"
+ 
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin_gestor
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: 123456

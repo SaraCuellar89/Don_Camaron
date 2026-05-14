@@ -3,10 +3,10 @@
 //Definir clase
 class Database{
     //Definir atributos
-    private static $host = "localhost";
+    private static $host = "db";
     private static $user_name = "root";
     private static $db_name = "don_camaron";
-    private static $password = "";
+    private static $password = "12345";
     private static $charset = "utf8mb4";
     private static $pdo = null;
 
