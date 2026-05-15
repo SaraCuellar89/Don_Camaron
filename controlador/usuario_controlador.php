@@ -12,13 +12,11 @@ Class Usuario_controlador{
         $this -> modelo_usuario = new Usuario();
     }
 
-    // Validar el usuario para iniciar sesion
     public function validar_usuario(){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $usuario = $this -> modelo_usuario -> login($_POST['correo'], $_POST['contraseña']);
 
             if($usuario){
-                session_start();
                 $_SESSION['usuario'] = $usuario;
                 
                 if($usuario['rol'] === 'Cliente'){
@@ -30,7 +28,6 @@ Class Usuario_controlador{
                 exit();
             }
             else{
-                session_start();
                 $_SESSION['error_message'] = "Credenciales no válidas.";
                 header("Location:../vista/Inicio_sesion.php");
                 exit();
@@ -42,16 +39,13 @@ Class Usuario_controlador{
         }
     }
 
-    // Cerrar Sesion
     public function cerrar_sesion(){
-        session_start();
         session_unset();
         session_destroy();
         header("Location:../index.php");
         exit();
     }
 
-    // Crear o registrar usuario
     public function registrar_usuario(){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $nombre = $_POST['nombre'];
@@ -64,34 +58,25 @@ Class Usuario_controlador{
             $usuario = new Usuario();
             $usuario->crear_usuario($rol, $nombre, $documento, $correo, $telefono, $contrasena);
 
-            session_start();
             $_SESSION['success_message'] = true;
             header("Location: " . $_SERVER['HTTP_REFERER']);
             exit();
-
-            // echo "<pre>";
-            // print_r($_POST);
-            // echo "</pre>";
-            // exit();
         }
         else{ 
             echo "No se pudo registrar";
         }
     }
 
-    // Obtener o listar todos los usuarios
     public function obtener_usuarios(){
         $usuario = new Usuario();
         return $usuario->listar_usuarios();
     }
 
-    // Obtener un usuario por su id
     public function obtener_usuario_id($id_usuario){
         $usuario = new Usuario();
         return $usuario->obtener_usuario_id($id_usuario);
     }
 
-    // Editar usuario
     public function editar_usuario(){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $id_usuario = $_POST['id_usuario'];
@@ -105,22 +90,15 @@ Class Usuario_controlador{
             $usuario = new Usuario();
             $usuario->editar_usuario($id_usuario, $nombre, $rol, $documento, $correo, $telefono, $contrasena);
 
-            session_start();
             $_SESSION['success_message'] = true;
             header("Location: " . $_SERVER['HTTP_REFERER']);
             exit();
-
-            // echo "<pre>";
-            // print_r($_POST);
-            // echo "</pre>";
-            // exit();
         }
         else{ 
             echo "No se pudo editar ";
         }
     }
 
-    // Eliminar un usuario
     public function eliminar_usuario(){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $id_usuario = $_POST['id_usuario'];
@@ -128,15 +106,9 @@ Class Usuario_controlador{
             $usuario = new Usuario();
             $usuario->eliminar_usuario($id_usuario);
 
-            session_start();
             $_SESSION['success_message'] = true;
             header("Location: " . $_SERVER['HTTP_REFERER']);
             exit();
-
-            // echo "<pre>";
-            // print_r($_POST);
-            // echo "</pre>";
-            // exit();
         }
         else{ 
             echo "No se pudo eliminar el usuario";
