@@ -78,7 +78,7 @@ class Reservas{
 
         foreach ($mesas as $numero_mesa) {
             // Verificar si la mesa existe
-            $sql_check = "SELECT id_mesa FROM Mesa WHERE numero_mesa = :numero AND sucursal_id = :sucursal";
+            $sql_check = "SELECT id_mesa FROM mesa WHERE numero_mesa = :numero AND sucursal_id = :sucursal";
             $stmt_check = $this->db->prepare($sql_check);
             $stmt_check->execute([':numero' => $numero_mesa, ':sucursal' => $Sucursalid_sucursal]);
             $mesa = $stmt_check->fetch(PDO::FETCH_ASSOC);
@@ -86,12 +86,12 @@ class Reservas{
             if ($mesa) {
                 $id_mesa = $mesa['id_mesa'];
                 // Actualizar estado
-                $sql_update = "UPDATE Mesa SET estado = 'ocupada' WHERE id_mesa = :id_mesa";
+                $sql_update = "UPDATE mesa SET estado = 'ocupada' WHERE id_mesa = :id_mesa";
                 $stmt_update = $this->db->prepare($sql_update);
                 $stmt_update->execute([':id_mesa' => $id_mesa]);
             } else {
                 // Crear la mesa (le damos capacidad por defecto 4)
-                $sql_insert = "INSERT INTO Mesa (numero_mesa, capacidad, estado, sucursal_id) VALUES (:numero, 4, 'ocupada', :sucursal)";
+                $sql_insert = "INSERT INTO mesa (numero_mesa, capacidad, estado, sucursal_id) VALUES (:numero, 4, 'ocupada', :sucursal)";
                 $stmt_insert = $this->db->prepare($sql_insert);
                 $stmt_insert->execute([':numero' => $numero_mesa, ':sucursal' => $Sucursalid_sucursal]);
                 $id_mesa = $this->db->lastInsertId();
@@ -113,7 +113,7 @@ class Reservas{
     public function eliminar_reserva_pasadas() {
 
         // 1. obtener reservas que ya pasaron
-        $sql = "SELECT id_reserva FROM Reserva WHERE fecha < CURDATE()";
+        $sql = "SELECT id_reserva FROM reserva WHERE fecha < CURDATE()";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -124,7 +124,7 @@ class Reservas{
         $sql_mesas = "SELECT id_mesa FROM reserva_mesa WHERE id_reserva = :id_reserva";
         $stmt_mesas = $this->db->prepare($sql_mesas);
 
-        $sql_del_mesa = "DELETE FROM Mesa WHERE id_mesa = :id_mesa";
+        $sql_del_mesa = "DELETE FROM mesa WHERE id_mesa = :id_mesa";
         $stmt_del_mesa = $this->db->prepare($sql_del_mesa);
 
         $sql_del_rel = "DELETE FROM reserva_mesa WHERE id_reserva = :id_reserva";
@@ -146,7 +146,7 @@ class Reservas{
         }
 
         // 5. eliminar reservas pasadas
-        $sql_del_res = "DELETE FROM Reserva WHERE fecha < CURDATE()";
+        $sql_del_res = "DELETE FROM reserva WHERE fecha < CURDATE()";
         $stmt_del_res = $this->db->prepare($sql_del_res);
         return $stmt_del_res->execute();
     }
@@ -155,7 +155,7 @@ class Reservas{
     public function eliminar_reserva($id_reserva) {
 
         // 1. Verificar si la reserva existe
-        $sql = "SELECT id_reserva FROM Reserva WHERE id_reserva = :id_reserva";
+        $sql = "SELECT id_reserva FROM reserva WHERE id_reserva = :id_reserva";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':id_reserva' => $id_reserva]);
         $reserva = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -171,7 +171,7 @@ class Reservas{
         $stmt_mesas = $this->db->prepare($sql_mesas);
 
         // eliminar mesa física
-        $sql_del_mesa = "DELETE FROM Mesa WHERE id_mesa = :id_mesa";
+        $sql_del_mesa = "DELETE FROM mesa WHERE id_mesa = :id_mesa";
         $stmt_del_mesa = $this->db->prepare($sql_del_mesa);
 
         // eliminar la relación
@@ -193,7 +193,7 @@ class Reservas{
         $stmt_del_rel->execute([':id_reserva' => $id_reserva]);
 
         // 5. eliminar la reserva
-        $sql_del_res = "DELETE FROM Reserva WHERE id_reserva = :id_reserva";
+        $sql_del_res = "DELETE FROM reserva WHERE id_reserva = :id_reserva";
         $stmt_del_res = $this->db->prepare($sql_del_res);
 
         return $stmt_del_res->execute([':id_reserva' => $id_reserva]);
