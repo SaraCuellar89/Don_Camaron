@@ -19,6 +19,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 12345
       MYSQL_DATABASE: don_camaron
+    command: --lower_case_table_names=2
     ports:
       - "3306:3306"
  
