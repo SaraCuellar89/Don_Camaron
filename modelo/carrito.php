@@ -12,18 +12,18 @@ class Carrito_modelo {
     // Agregar al carrito
     public function agregar($id_usuario, $id_menu, $cantidad) {
 
-        $sql = "SELECT cantidad FROM Carrito WHERE Usuarioid_usuario = ? AND Menuid_menu = ?";
+        $sql = "SELECT cantidad FROM carrito WHERE Usuarioid_usuario = ? AND Menuid_menu = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id_usuario, $id_menu]);
 
         if ($stmt->rowCount() > 0) {
-            $sql = "UPDATE Carrito 
+            $sql = "UPDATE carrito 
                     SET cantidad = cantidad + ? 
                     WHERE Usuarioid_usuario = ? AND Menuid_menu = ?";
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([$cantidad, $id_usuario, $id_menu]);
         } else {
-            $sql = "INSERT INTO Carrito (Usuarioid_usuario, Menuid_menu, cantidad)
+            $sql = "INSERT INTO carrito (Usuarioid_usuario, Menuid_menu, cantidad)
                     VALUES (?, ?, ?)";
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([$id_usuario, $id_menu, $cantidad]);
@@ -37,8 +37,8 @@ class Carrito_modelo {
                        m.imagen,
                        m.precio,
                        c.cantidad
-                FROM Carrito c
-                INNER JOIN Menu m ON c.Menuid_menu = m.id_menu
+                FROM carrito c
+                INNER JOIN menu m ON c.Menuid_menu = m.id_menu
                 WHERE c.Usuarioid_usuario = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id_usuario]);
@@ -47,7 +47,7 @@ class Carrito_modelo {
 
     // Eliminar producto
     public function eliminar($id_usuario, $id_menu) {
-        $sql = "DELETE FROM Carrito 
+        $sql = "DELETE FROM carrito 
                 WHERE Usuarioid_usuario = ? AND Menuid_menu = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$id_usuario, $id_menu]);
@@ -55,7 +55,7 @@ class Carrito_modelo {
 
     // Vaciar Carrito
     public function vaciar($id_usuario) {
-        $sql = "DELETE FROM Carrito WHERE Usuarioid_usuario = ?";
+        $sql = "DELETE FROM carrito WHERE Usuarioid_usuario = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$id_usuario]);
     }
